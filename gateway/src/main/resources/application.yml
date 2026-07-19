@@ -1,0 +1,19 @@
+server:
+  port: 10010
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: agent-gateway
+              uri: http://localhost:9090
+              predicates:
+                - Path=/chat/**
+            - id: demo-gateway
+              uri: http://localhost:8080
+              predicates:
+                - Path=/**

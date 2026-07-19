@@ -1,0 +1,202 @@
+/* 登录页面样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #e0e0e0;
+}
+
+.container {
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+}
+
+.login-box {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 40px 32px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 36px;
+}
+
+.login-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #e94560;
+    margin-bottom: 8px;
+}
+
+.login-header p {
+    font-size: 14px;
+    color: #a0a0b0;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #c0c0d0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 40px 12px 14px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    font-size: 15px;
+    color: #ffffff;
+    outline: none;
+    transition: border-color 0.3s, background 0.3s;
+}
+
+.form-group input::placeholder {
+    color: #6a6a7a;
+}
+
+.form-group input:focus {
+    border-color: #e94560;
+    background: rgba(255, 255, 255, 0.10);
+}
+
+.form-group input.error {
+    border-color: #ff4444;
+}
+
+.form-group .input-icon {
+    position: absolute;
+    right: 14px;
+    top: 38px;
+    color: #6a6a7a;
+    cursor: pointer;
+    font-size: 16px;
+    user-select: none;
+}
+
+.form-group .input-icon:hover {
+    color: #a0a0b0;
+}
+
+.error-msg {
+    color: #ff4444;
+    font-size: 12px;
+    margin-top: 4px;
+    display: none;
+}
+
+.error-msg.show {
+    display: block;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 13px;
+    background: #e94560;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.1s;
+    margin-top: 8px;
+}
+
+.btn-login:hover {
+    background: #c73652;
+}
+
+.btn-login:active {
+    transform: scale(0.98);
+}
+
+.btn-login:disabled {
+    background: #6a3a46;
+    cursor: not-allowed;
+}
+
+.msg-box {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 13px;
+    padding: 10px;
+    border-radius: 6px;
+    display: none;
+}
+
+.msg-box.error {
+    display: block;
+    background: rgba(255, 68, 68, 0.15);
+    color: #ff6666;
+    border: 1px solid rgba(255, 68, 68, 0.3);
+}
+
+.msg-box.success {
+    display: block;
+    background: rgba(68, 255, 68, 0.10);
+    color: #66ff66;
+    border: 1px solid rgba(68, 255, 68, 0.3);
+}
+
+.footer-text {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 13px;
+    color: #6a6a7a;
+}
+
+.footer-text a {
+    color: #e94560;
+    text-decoration: none;
+}
+
+.footer-text a:hover {
+    text-decoration: underline;
+}
+
+.loading-spinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid #ffffff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.btn-login.loading .btn-text {
+    display: none;
+}
+
+.btn-login.loading .loading-spinner {
+    display: inline-block;
+}

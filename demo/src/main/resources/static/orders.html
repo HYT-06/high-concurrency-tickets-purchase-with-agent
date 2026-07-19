@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的订单 - 票务预订系统</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <style>
+        .status-paid { color: #66ff66; background: rgba(68,255,68,0.1); padding: 3px 10px; border-radius: 12px; font-size: 12px; }
+        .status-pending { color: #ffa500; background: rgba(255,165,0,0.1); padding: 3px 10px; border-radius: 12px; font-size: 12px; }
+        .status-cancelled { color: #ff6666; background: rgba(255,68,68,0.1); padding: 3px 10px; border-radius: 12px; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <span class="logo">票务预订系统</span>
+        <div class="user-info">
+            <a href="/trains.html">车次查询</a>
+            <a href="/orders.html">我的订单</a>
+            <span id="welcomeText">欢迎</span>
+            <a href="/login.html" onclick="sessionStorage.clear()">退出登录</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <h2>我的订单</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>订单编号</th>
+                            <th>车次</th>
+                            <th>座位号</th>
+                            <th>票价</th>
+                            <th>日期</th>
+                            <th>状态</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderList">
+                        <tr><td colspan="8"><div class="loading"><div class="spinner"></div>加载中...</div></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="msg-box" id="msgBox"></div>
+        </div>
+    </div>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/orders.js"></script>
+    <link rel="stylesheet" href="/css/chat-widget.css">
+    <script src="/js/chat-widget.js"></script>
+</body>
+</html>

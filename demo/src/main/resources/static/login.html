@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 票务预订系统</title>
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+    <div class="container">
+        <div class="login-box">
+            <div class="login-header">
+                <h1>票务预订系统</h1>
+                <p>请登录您的账户以继续</p>
+            </div>
+
+            <form id="loginForm" novalidate>
+                <div class="form-group">
+                    <label for="name">用户名</label>
+                    <input type="text" id="name" placeholder="请输入用户名" autocomplete="username">
+                    <div class="error-msg" id="nameError">请输入用户名</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" placeholder="请输入密码" autocomplete="current-password">
+                    <span class="input-icon" id="togglePwd" title="显示/隐藏密码">👁</span>
+                    <div class="error-msg" id="pwdError">请输入密码</div>
+                </div>
+
+                <button type="submit" class="btn-login" id="submitBtn">
+                    <span class="btn-text">登 录</span>
+                    <span class="loading-spinner"></span>
+                </button>
+
+                <div class="msg-box" id="msgBox"></div>
+            </form>
+
+            <div class="footer-text">
+                还没有账户？<a href="/register.html">立即注册</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/login.js"></script>
+</body>
+</html>

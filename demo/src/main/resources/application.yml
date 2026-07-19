@@ -1,12 +1,42 @@
 spring:
   application:
     name: demo
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: chat-agent
+              uri: http://localhost:9090
+              predicates:
+                - Path=/chat/**
+  devtools:
+    restart:
+      enabled: false
   datasource:
     url: jdbc:mysql://localhost:3306/ticket?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8
     username: root
-    password: 123456
+    password: "123456"
     driver-class-name: com.mysql.cj.jdbc.Driver
-
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      timeout: 10s
+  rabbitmq:
+      host: localhost
+      port: 5672
+      username: guest
+      password: guest
+      virtual-host: /
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.hyt.test.entity
+  type-aliases-package: com.hyt.test.demo.common
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    root: WARN
+    com.hyt.test.demo: INFO

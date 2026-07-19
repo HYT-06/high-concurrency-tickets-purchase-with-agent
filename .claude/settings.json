@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//g/JAVA/program/test/demo/**)",
+      "Bash(\"G:/JAVA/REDIS/Redis-x64-3.0.504/redis-cli.exe\" SET \"seat:stock:9\" 1)",
+      "Bash(curl -s -X POST http://localhost:8080/order/create -H \"Content-Type: application/json\" -d \"{\\\\\"userId\\\\\":1,\\\\\"trainId\\\\\":1,\\\\\"seatId\\\\\":9}\")",
+      "Bash(\"G:/JAVA/REDIS/Redis-x64-3.0.504/redis-cli.exe\" GET \"seat:stock:9\")",
+      "Bash(mysql -uroot -p123456 ticket -e \"SELECT id, user_id, train_id, seat_id, status, created_at FROM \\\\`order\\\\` WHERE seat_id=9 ORDER BY id DESC LIMIT 2;\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'messages={d[\\\\\"messages\\\\\"]}, ready={d[\\\\\"messages_ready\\\\\"]}, unacked={d[\\\\\"messages_unacknowledged\\\\\"]}, redeliver={d.get\\(\\\\\"message_stats\\\\\",{}\\).get\\(\\\\\"redeliver\\\\\",0\\)}'\\)\")",
+      "Bash(sc query *)",
+      "Bash(netstat -ano)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\" http://localhost:8080/login.html)",
+      "Bash(mvn dependency:tree -q)",
+      "Bash(mvn dependency:build-classpath -DincludeScope=compile -Dmdep.outputFile=/dev/stdout -q)",
+      "Bash(jar tf *)",
+      "Bash(unzip -p ~/.m2/repository/org/springframework/cloud/spring-cloud-gateway-server-webmvc/5.0.2/spring-cloud-gateway-server-webmvc-5.0.2.jar META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports)",
+      "Bash(cd /tmp)",
+      "Bash(unzip -o ~/.m2/repository/org/springframework/cloud/spring-cloud-gateway-server-webmvc/5.0.2/spring-cloud-gateway-server-webmvc-5.0.2.jar -d /tmp/gateway-webmvc)",
+      "Bash(javap -p /tmp/gateway-webmvc/org/springframework/cloud/gateway/server/mvc/config/GatewayMvcProperties.class)",
+      "Bash(javap -p /tmp/gateway-webmvc/org/springframework/cloud/gateway/server/mvc/config/RouteProperties.class)",
+      "Bash(javap -p /tmp/gateway-webmvc/org/springframework/cloud/gateway/server/mvc/config/PredicateProperties.class)",
+      "Bash(javap -c -p /tmp/gateway-webmvc/org/springframework/cloud/gateway/server/mvc/config/GatewayMvcPropertiesBeanDefinitionRegistrar.class)",
+      "Bash(javap -c -p /tmp/gateway-webmvc/org/springframework/cloud/gateway/server/mvc/config/RouterFunctionHolderFactory.class)",
+      "Bash(javap -c -p -constants /tmp/gateway-webmvc/org/springframework/cloud/gateway/server/mvc/config/GatewayMvcProperties.class)"
+    ]
+  }
+}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>车次查询 - 票务预订系统</title>
+    <link rel="stylesheet" href="/css/common.css">
+</head>
+<body>
+    <nav class="navbar">
+        <span class="logo">票务预订系统</span>
+        <div class="user-info">
+            <a href="/trains.html">车次查询</a>
+            <a href="/orders.html">我的订单</a>
+            <span id="welcomeText">欢迎</span>
+            <a href="/login.html" onclick="sessionStorage.clear()">退出登录</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <h2>车次查询</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>车次</th>
+                            <th>编号</th>
+                            <th>类型</th>
+                            <th>出发站</th>
+                            <th>到达站</th>
+                            <th>历时</th>
+                            <th>票价</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trainList">
+                        <tr><td colspan="9"><div class="loading"><div class="spinner"></div>加载中...</div></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/trains.js"></script>
+    <link rel="stylesheet" href="/css/chat-widget.css">
+    <script src="/js/chat-widget.js"></script>
+</body>
+</html>
