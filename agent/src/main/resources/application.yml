@@ -11,3 +11,8 @@ langchain4j:
       model-name: qwen-plus
       temperature: 0.3
       max-tokens: 1024
+  embedding-model:
+    model-name: text-embedding-ada-002
+logging:
+  level:
+    '[dev.langchain4j]': DEBUG

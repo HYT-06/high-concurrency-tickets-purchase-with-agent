@@ -64,7 +64,31 @@
         <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
         <version>1.0.0-beta1</version>
     	</dependency>
+		 <!-- LangChain4j 核心 Starter -->
+    <dependency>
+        <groupId>dev.langchain4j</groupId>
+        <artifactId>langchain4j-spring-boot-starter</artifactId>
+        <version>0.35.0</version> <!-- 建议去Maven仓库查最新稳定版 -->
+    </dependency>
+    <!-- OpenAI 兼容模型适配器（支持 DeepSeek、通义千问等） -->
+    <dependency>
+        <groupId>dev.langchain4j</groupId>
+        <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
+        <version>0.35.0</version>
+    </dependency>
+	<!-- 文档解析工具，支持读取 PDF、Word、TXT 等 -->
+<dependency>
+    <groupId>dev.langchain4j</groupId>
+    <artifactId>langchain4j-document-parser-apache-tika</artifactId>
+    <version>0.35.0</version>
+</dependency>
 
+<!-- 内存向量库（测试最快，无需额外装数据库） -->
+<dependency>
+    <groupId>dev.langchain4j</groupId>
+    <artifactId>langchain4j-embeddings-all-minilm-l6-v2</artifactId>
+    <version>0.35.0</version>
+</dependency>
 	</dependencies>
 
 

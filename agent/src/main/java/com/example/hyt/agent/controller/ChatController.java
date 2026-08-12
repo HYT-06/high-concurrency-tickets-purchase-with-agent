@@ -1,6 +1,7 @@
 package com.example.hyt.agent.controller;
 
 import com.example.hyt.agent.service.UserChatService;
+import com.example.hyt.agent.tools.OrderQueryTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,10 @@ public class ChatController {
 
         String userId = request.getOrDefault("userId", "default");
         String message = request.get("message");
+
+        // 设置用户上下文（用于工具调用）
+        OrderQueryTool.setUserId(userId);
+
         try {
             log.info("调用 AI 服务...");
             String reply = userChatService.chat(userId, message);
@@ -36,6 +41,9 @@ public class ChatController {
         } catch (Exception e) {
             log.error("处理请求异常", e);
             return Map.of("success", false, "error", e.getMessage());
+        } finally {
+            // 清理用户上下文
+            OrderQueryTool.clearUserId();
         }
     }
 }
