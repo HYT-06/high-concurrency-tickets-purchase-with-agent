@@ -23,27 +23,34 @@ public class ChatController {
 
     @PostMapping
     public Map<String, Object> chat(@RequestBody Map<String, String> request) {
-        log.info("=== 收到 POST /chat ===");
-        log.info("userId: {}", request.getOrDefault("userId", "N/A"));
-        log.info("message: {}", request.getOrDefault("message", "N/A"));
-
         String userId = request.getOrDefault("userId", "default");
         String message = request.get("message");
 
-        // 设置用户上下文（用于工具调用）
+        log.info("[CHAIN] 🟢 REQUEST userId={} message=\"{}\"", userId, truncate(message, 100));
+
+        long start = System.currentTimeMillis();
         OrderQueryTool.setUserId(userId);
 
         try {
-            log.info("调用 AI 服务...");
             String reply = userChatService.chat(userId, message);
-            log.info("AI 回复长度: {}", reply != null ? reply.length() : 0);
+            long totalCost = System.currentTimeMillis() - start;
+
+            log.info("[CHAIN] ✅ RESPONSE userId={} totalCost={}ms reply=\"{}\"",
+                    userId, totalCost, truncate(reply, 200));
             return Map.of("success", true, "reply", reply);
         } catch (Exception e) {
-            log.error("处理请求异常", e);
+            long totalCost = System.currentTimeMillis() - start;
+            log.error("[CHAIN] ❌ FAILED userId={} totalCost={}ms error={}",
+                    userId, totalCost, e.getMessage(), e);
             return Map.of("success", false, "error", e.getMessage());
         } finally {
-            // 清理用户上下文
             OrderQueryTool.clearUserId();
         }
+    }
+
+    private static String truncate(String s, int max) {
+        if (s == null) return "(null)";
+        String oneLine = s.replaceAll("\\s+", " ").trim();
+        return oneLine.length() > max ? oneLine.substring(0, max) + "..." : oneLine;
     }
 }
