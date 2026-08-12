@@ -10,6 +10,7 @@ import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.rag.content.Content;
+import dev.langchain4j.rag.content.ContentMetadata;
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.store.embedding.EmbeddingStore;
@@ -111,9 +112,11 @@ public class ChatMemoryConfig {
                     log.info("[RAG] 🔍 query=\"{}\" hits={} cost={}ms",
                             truncate(query.text(), 80), hits.size(), cost);
                     for (int i = 0; i < hits.size(); i++) {
-                        TextSegment seg = hits.get(i).textSegment();
-                        log.info("      [{}] score={} -> {}",
-                                i + 1, String.format("%.3f", hits.get(i).score()), truncate(seg.text(), 120));
+                        Content c = hits.get(i);
+                        TextSegment seg = c.textSegment();
+                        Object scoreObj = c.metadata().get(ContentMetadata.SCORE);
+                        String scoreStr = scoreObj != null ? String.format("%.3f", (Double) scoreObj) : "?";
+                        log.info("      [{}] score={} -> {}", i + 1, scoreStr, truncate(seg.text(), 120));
                     }
                     return hits;
                 })
