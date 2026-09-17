@@ -54,6 +54,11 @@
 			<version>0.12.6</version>
 			<scope>runtime</scope>
 		</dependency>
+		<!-- Redis (监控数据采集) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
 		<!-- Guava (令牌桶限流) -->
 		<dependency>
 			<groupId>com.google.guava</groupId>

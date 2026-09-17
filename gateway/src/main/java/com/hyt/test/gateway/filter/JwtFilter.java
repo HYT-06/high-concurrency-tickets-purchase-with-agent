@@ -127,6 +127,10 @@ public class JwtFilter implements Filter {
         if (path.startsWith("/chat")) {
             return true;
         }
+        // 监控查询 API（内部调用，不做 JWT 鉴权）
+        if (path.startsWith("/monitor")) {
+            return true;
+        }
         // 根路径
         if (path.equals("/") || path.isEmpty()) {
             return true;
