@@ -21,7 +21,15 @@
       "Bash(javap -p /tmp/gateway-webmvc/org/springframework/cloud/gateway/server/mvc/config/PredicateProperties.class)",
       "Bash(javap -c -p /tmp/gateway-webmvc/org/springframework/cloud/gateway/server/mvc/config/GatewayMvcPropertiesBeanDefinitionRegistrar.class)",
       "Bash(javap -c -p /tmp/gateway-webmvc/org/springframework/cloud/gateway/server/mvc/config/RouterFunctionHolderFactory.class)",
-      "Bash(javap -c -p -constants /tmp/gateway-webmvc/org/springframework/cloud/gateway/server/mvc/config/GatewayMvcProperties.class)"
+      "Bash(javap -c -p -constants /tmp/gateway-webmvc/org/springframework/cloud/gateway/server/mvc/config/GatewayMvcProperties.class)",
+      "Bash(git mv *)",
+      "Bash(mkdir -p demo/src/main/resources/static/css demo/src/main/resources/static/js demo/src/main/resources/lua)",
+      "Bash(git restore *)",
+      "Bash(cp -r demo/src/main/java/resources/* demo/src/main/resources/)",
+      "Bash(rm -rf \"g:/JAVA/program/12306——refreash/demo/src/main/java/resources\" && echo \"Wrong directory removed\")"
+    ],
+    "additionalDirectories": [
+      "g:\\JAVA\\program\\12306——refreash\\demo\\src\\main\\java\\resources"
     ]
   }
 }
