@@ -18,6 +18,10 @@ spring:
               uri: http://localhost:9090
               predicates:
                 - Path=/chat/**
+            - id: monitor-agent-gateway
+              uri: http://localhost:9091
+              predicates:
+                - Path=/monitor/ask/**
             - id: demo-gateway
               uri: http://localhost:8080
               predicates:
