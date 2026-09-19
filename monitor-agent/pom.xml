@@ -22,6 +22,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		<!-- Redis (直连查询监控数据) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
 		<!-- LangChain4j 核心 -->
 		<dependency>
 			<groupId>dev.langchain4j</groupId>
