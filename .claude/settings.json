@@ -26,7 +26,24 @@
       "Bash(mkdir -p demo/src/main/resources/static/css demo/src/main/resources/static/js demo/src/main/resources/lua)",
       "Bash(git restore *)",
       "Bash(cp -r demo/src/main/java/resources/* demo/src/main/resources/)",
-      "Bash(rm -rf \"g:/JAVA/program/12306——refreash/demo/src/main/java/resources\" && echo \"Wrong directory removed\")"
+      "Bash(rm -rf \"g:/JAVA/program/12306——refreash/demo/src/main/java/resources\" && echo \"Wrong directory removed\")",
+      "Bash(bash start-all.sh status)",
+      "Bash(echo \"rc=$?\")",
+      "Bash(bash start-all.sh --help)",
+      "Bash(bash start-all.sh start agent --timeout=180)",
+      "Bash(bash start-all.sh stop agent)",
+      "Bash(bash start-all.sh start agent --skip-build --timeout=60)",
+      "Bash(bash start-all.sh stop)",
+      "Bash(bash -n start-all.sh)",
+      "Bash(bash start-all.sh --timeout=180)",
+      "Bash(grep -vE \"^WARNING|^$\")",
+      "Bash(bash start-all.sh start demo --timeout=180)",
+      "Bash(curl -s -o /dev/null -w '  gateway:10010/chat  -> %{http_code}\\\\n' -m 5 http://localhost:10010/chat)",
+      "Bash(curl -s -o /dev/null -w '  agent:9090/chat     -> %{http_code}\\\\n' -m 5 http://localhost:9090/chat)",
+      "Bash(curl -s -o /dev/null -w '  gateway:10010/monitor/ask -> %{http_code}\\\\n' -m 5 http://localhost:10010/monitor/ask)",
+      "Bash(curl -s -o /dev/null -w '  monitor:9091/monitor/ask  -> %{http_code}\\\\n' -m 5 http://localhost:9091/monitor/ask)",
+      "Bash(mysql -uroot -p123456 -D ticket -e \"SELECT COUNT\\(*\\) AS total_users FROM user; SHOW INDEX FROM user; DESCRIBE user;\")",
+      "Bash(mysql -uroot -p123456 -D ticket -e \"SELECT id, username, password, status FROM user;\")"
     ],
     "additionalDirectories": [
       "g:\\JAVA\\program\\12306——refreash\\demo\\src\\main\\java\\resources"
