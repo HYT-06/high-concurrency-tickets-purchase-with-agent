@@ -15,3 +15,8 @@ redis-sentinel/
 .idea/
 *.iml
 .vscode/
+
+# 本地密钥配置（API Key / JWT 密钥等），绝不能进版本库
+# 各模块的 application.yml 只写占位符，真实值放这里的 local 文件
+application-local.yml
+application-local.properties

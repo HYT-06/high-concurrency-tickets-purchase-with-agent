@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: monitor-agent
+  # 默认激活 local profile：真实密钥放 application-local.yml（已被 .gitignore 忽略）
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
   data:
     redis:
       # Redis 哨兵模式：1 主(6379) + 2 从(6380/6381) + 3 哨兵(26379-26381)
@@ -20,7 +23,8 @@ langchain4j:
   open-ai:
     chat-model:
       base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
-      api-key: REDACTED_API_KEY
+      # 密钥不入库：本地值放 application-local.yml（gitignore），生产用环境变量注入
+      api-key: ${DASHSCOPE_API_KEY:}
       model-name: qwen-plus
       temperature: 0.3
       max-tokens: 1024

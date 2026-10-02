@@ -27,7 +27,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class JwtFilter implements Filter {
 
-    private static final String SECRET = "REDACTED_JWT_SECRET";
+    /**
+     * JWT 签名密钥。原实现硬编码在源码里并随仓库公开——
+     * 拿到它就能伪造 token 冒充任意用户，完全绕过本过滤器。
+     * 现从配置读取：本地值放 application-local.yml（gitignore），生产用环境变量注入。
+     */
+    @Value("${jwt.secret}")
+    private String secret;
 
     /** 校验通过后注入给下游服务的用户身份头，agent 从它读取 userId */
     public static final String USER_ID_HEADER = "X-User-Id";
@@ -196,7 +202,7 @@ public class JwtFilter implements Filter {
     private Claims parseToken(String token) {
         try {
             return Jwts.parser()
-                .verifyWith(Keys.hmacShaKeyFor(SECRET.getBytes()))
+                .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();

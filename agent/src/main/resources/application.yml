@@ -3,6 +3,11 @@ server:
 spring:
   application:
     name: agent
+  # 默认激活 local profile：真实密钥放在 application-local.yml（已被 .gitignore 忽略），
+  # 保证本地开箱即用，同时仓库里不出现任何明文密钥。
+  # 部署时用环境变量覆盖：SPRING_PROFILES_ACTIVE=prod 并设置 DASHSCOPE_API_KEY。
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
   # ============================================================
   # 只读访问 demo 的 MySQL（替换原先的硬编码 mock 数据）
   # 指向 3307 从库：客服问答是纯只读流量，且能容忍秒级延迟，
@@ -24,7 +29,8 @@ langchain4j:
   open-ai:
     chat-model:
       base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
-      api-key: REDACTED_API_KEY
+      # 密钥不入库：本地值放 application-local.yml（gitignore），生产用环境变量注入
+      api-key: ${DASHSCOPE_API_KEY:}
       model-name: qwen-plus
       temperature: 0.3
       max-tokens: 1024

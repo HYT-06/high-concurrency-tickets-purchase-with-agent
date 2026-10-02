@@ -49,7 +49,9 @@ public class TrafficMetricsFilter implements Filter {
     @Value("${monitor.retention-seconds:300}")
     private int retentionSeconds;
 
-    private static final String SECRET = "REDACTED_JWT_SECRET";
+    /** JWT 签名密钥，用于解析 token 得到 userId 以便按用户记流量。原为硬编码，现从配置读取 */
+    @Value("${jwt.secret}")
+    private String secret;
 
     public TrafficMetricsFilter(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
@@ -135,7 +137,7 @@ public class TrafficMetricsFilter implements Filter {
         try {
             String token = authHeader.substring(7);
             Claims claims = Jwts.parser()
-                    .verifyWith(Keys.hmacShaKeyFor(SECRET.getBytes()))
+                    .verifyWith(Keys.hmacShaKeyFor(secret.getBytes()))
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
