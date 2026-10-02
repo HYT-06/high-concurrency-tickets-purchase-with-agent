@@ -1,4 +1,4 @@
-﻿package com.hyt.test.demo;
+package com.hyt.test.demo;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -80,4 +80,3 @@ class GatewayRouteForwardingTests {
         }
     }
 }
-

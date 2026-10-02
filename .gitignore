@@ -1,2 +1,17 @@
 # start-all.sh 产生的运行日志与 pid 文件
 logs/
+
+# Maven 构建产物
+# monitor-agent 原先没有自己的 .gitignore，导致 target/ 下的 class 文件与
+# application.yml 副本（含 API Key）被提交进仓库，这里统一兜住。
+target/
+*.class
+
+# 本地基础设施运行时目录（MySQL 从库数据、Redis 哨兵配置等），不入版本库
+mysql-slave-data/
+redis-sentinel/
+
+# IDE
+.idea/
+*.iml
+.vscode/

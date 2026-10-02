@@ -1,42 +1,37 @@
 package com.example.hyt.agent.tools;
 
-import dev.langchain4j.agent.tool.P;
-import dev.langchain4j.agent.tool.Tool;
-import org.springframework.stereotype.Component;
-
 import java.util.Map;
 
+import org.springframework.stereotype.Component;
+
+import com.example.hyt.agent.repository.TicketRepository;
+
+import dev.langchain4j.agent.tool.P;
+import dev.langchain4j.agent.tool.Tool;
+
 /**
- * 票价查询工具
+ * 票价查询工具。
+ * <p>
+ * demo 库没有独立的票价表，票价存在 {@code train.price} 上，
+ * 因此这里返回"车次号 -> 票价"的映射，用于两站之间的比价。
+ * <p>
+ * 原实现查不到时会返回 {@code {"提示": -1.0}} 这种魔法值，
+ * 容易被模型误读成"票价 -1 元"；现在改为返回空映射。
  */
 @Component
 public class PriceQueryTool {
 
-    // Mock 票价数据（简化版，实际应从数据库查询）
-    private static final Map<String, Map<String, Double>> PRICE_TABLE = Map.of(
-            "北京南-上海虹桥", Map.of("二等座", 553.0, "一等座", 933.0, "商务座", 1748.0),
-            "北京-天津", Map.of("二等座", 55.5, "一等座", 88.5),
-            "北京-广州", Map.of("硬座", 251.0, "硬卧", 423.0, "软卧", 655.0),
-            "北京南-杭州东", Map.of("二等座", 538.5, "一等座", 906.5),
-            "上海虹桥-杭州东", Map.of("二等座", 73.0, "一等座", 117.0)
-    );
+    private final TicketRepository ticketRepository;
 
-    @Tool("查询两站之间的票价")
+    public PriceQueryTool(TicketRepository ticketRepository) {
+        this.ticketRepository = ticketRepository;
+    }
+
+    @Tool("查询两站之间各车次的票价，返回 车次号->票价 的映射并按票价升序；返回空映射表示该区间无车次")
     public Map<String, Double> queryPrice(
             @P("出发站") String fromStation,
             @P("到达站") String toStation
     ) {
-        String key1 = fromStation + "-" + toStation;
-        String key2 = toStation + "-" + fromStation;
-
-        if (PRICE_TABLE.containsKey(key1)) {
-            return PRICE_TABLE.get(key1);
-        }
-        if (PRICE_TABLE.containsKey(key2)) {
-            return PRICE_TABLE.get(key2);
-        }
-
-        // 未找到时返回默认提示
-        return Map.of("提示", -1.0);
+        return ticketRepository.findPrices(fromStation, toStation);
     }
 }

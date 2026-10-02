@@ -6,8 +6,12 @@ spring:
     name: gateway
   data:
     redis:
-      host: localhost
-      port: 6379
+      # Redis 哨兵模式：1 主(6379) + 2 从(6380/6381) + 3 哨兵(26379-26381)
+      # 哨兵模式下不能再配 host/port，否则配置冲突。
+      # 流量采集（TrafficMetricsFilter）写入的 key 会随故障转移自动路由到新主节点。
+      sentinel:
+        master: mymaster
+        nodes: localhost:26379,localhost:26380,localhost:26381
       timeout: 3000ms
   cloud:
     gateway:

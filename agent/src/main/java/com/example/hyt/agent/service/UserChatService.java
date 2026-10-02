@@ -18,5 +18,10 @@ public interface UserChatService {
             - 简洁专业，控制在150字以内
             - 涉及规则时，准确引用知识库内容
             - 友好礼貌，使用中文回复""")
-    String chat(@MemoryId String userId, @UserMessage String message);
+    /**
+     * @param memoryId 记忆窗口标识，格式为 {@code userId:sessionId}。
+     *                 拆成两段是为了让「身份」和「会话」各司其职——身份用于鉴权，
+     *                 会话用于隔离记忆，否则同一用户多端会共用一份对话上下文。
+     */
+    String chat(@MemoryId String memoryId, @UserMessage String message);
 }

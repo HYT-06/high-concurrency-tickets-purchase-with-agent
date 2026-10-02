@@ -3,6 +3,23 @@ server:
 spring:
   application:
     name: agent
+  # ============================================================
+  # 只读访问 demo 的 MySQL（替换原先的硬编码 mock 数据）
+  # 指向 3307 从库：客服问答是纯只读流量，且能容忍秒级延迟，
+  # 正好利用 demo 搭好的主从复制，同时不给主库增加查询压力。
+  # 账号 agent_ro 只有 ticket 库的 SELECT 权限，从库另有 read_only=1 兜底。
+  # 若需要"刚下单立刻能查到"的强一致语义，把端口改成 3306 走主库即可。
+  # ============================================================
+  datasource:
+    # allowPublicKeyRetrieval=true：MySQL 8 默认缓存式 SHA2 认证在非 SSL 连接下
+    # 首次认证需要获取服务端公钥，否则报 "Public Key Retrieval is not allowed"
+    url: jdbc:mysql://localhost:3307/ticket?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&characterEncoding=utf8
+    username: agent_ro
+    password: agent_ro_pwd
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 5
+      read-only: true
 langchain4j:
   open-ai:
     chat-model:

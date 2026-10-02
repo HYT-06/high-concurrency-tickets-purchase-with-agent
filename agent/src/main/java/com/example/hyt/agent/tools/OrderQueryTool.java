@@ -1,20 +1,27 @@
 package com.example.hyt.agent.tools;
 
-import com.example.hyt.agent.dto.OrderInfo;
-import dev.langchain4j.agent.tool.P;
-import dev.langchain4j.agent.tool.Tool;
-import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
+import com.example.hyt.agent.dto.OrderInfo;
+import com.example.hyt.agent.repository.TicketRepository;
+
+import dev.langchain4j.agent.tool.P;
+import dev.langchain4j.agent.tool.Tool;
+
 /**
- * 订单查询工具
+ * 订单查询工具。
+ * <p>
+ * 已从硬编码 mock 数据改为查询 demo 库的 {@code order} 表，
+ * 并 JOIN 车次与座位表补齐站名、座位号。
+ * <p>
+ * 用户身份通过 {@link ThreadLocal} 由 {@code ChatController} 注入，
+ * 刻意不作为工具参数暴露——否则 LLM 可以伪造 userId 去查他人订单。
  */
 @Component
 public class OrderQueryTool {
 
-    // 用户上下文，用于传递当前登录用户ID
     private static final ThreadLocal<String> currentUserId = new ThreadLocal<>();
 
     public static void setUserId(String userId) {
@@ -25,41 +32,40 @@ public class OrderQueryTool {
         currentUserId.remove();
     }
 
-    // Mock 订单数据
-    private static final List<OrderInfo> MOCK_ORDERS = List.of(
-            new OrderInfo("ORD001", "G1", "北京南", "上海虹桥", "2026-07-20", "06:36", "12车03A", 553.0, "PAID"),
-            new OrderInfo("ORD002", "D1", "北京", "天津", "2026-07-21", "07:30", "05车10B", 55.5, "PAID"),
-            new OrderInfo("ORD003", "K1", "北京", "广州", "2026-07-15", "18:00", "08车15号", 423.0, "USED"),
-            new OrderInfo("ORD004", "G3", "北京南", "上海虹桥", "2026-07-22", "07:00", "10车08F", 553.0, "PAID")
-    );
-
-    @Tool("查询当前用户的订单列表")
-    public List<OrderInfo> queryOrder(
-            @P("订单状态：ALL-全部, PAID-已支付, USED-已乘车, CANCELLED-已取消") String status
-    ) {
+    /**
+     * 取当前线程的用户身份，缺失时快速失败。
+     * <p>
+     * 之所以抛异常而不是返回空列表：缺失身份会静默表现为"该用户没有订单"，
+     * 与真实的无订单无法区分。典型成因是把工具改成异步或流式执行——
+     * ThreadLocal 不跨线程传递，那样 {@code get()} 会静默返回 null。
+     */
+    private static String requireUserId() {
         String userId = currentUserId.get();
-        // 实际场景中应根据 userId 查询，这里返回 Mock 数据
-        if (status == null || "ALL".equalsIgnoreCase(status)) {
-            return MOCK_ORDERS;
+        if (userId == null || userId.isBlank()) {
+            throw new IllegalStateException(
+                    "当前线程未注入用户身份，无法查询订单。请确认调用入口已执行 "
+                            + "OrderQueryTool.setUserId(...)，且工具仍在请求线程上同步执行。");
         }
-        List<OrderInfo> result = new ArrayList<>();
-        for (OrderInfo order : MOCK_ORDERS) {
-            if (order.status().equalsIgnoreCase(status)) {
-                result.add(order);
-            }
-        }
-        return result;
+        return userId;
     }
 
-    @Tool("根据订单号查询订单详情")
-    public OrderInfo queryOrderById(
+    private final TicketRepository ticketRepository;
+
+    public OrderQueryTool(TicketRepository ticketRepository) {
+        this.ticketRepository = ticketRepository;
+    }
+
+    @Tool("查询当前登录用户的订单列表；返回空列表表示该用户没有订单")
+    public List<OrderInfo> queryOrder(
+            @P("订单状态过滤，如 pending-待支付、paid-已支付、cancelled-已取消；传 ALL 表示全部") String status
+    ) {
+        return ticketRepository.findOrders(requireUserId(), status);
+    }
+
+    @Tool("根据订单号查询订单详情，返回列表；返回空列表表示未找到该订单")
+    public List<OrderInfo> queryOrderById(
             @P("订单号") String orderId
     ) {
-        for (OrderInfo order : MOCK_ORDERS) {
-            if (order.orderId().equals(orderId)) {
-                return order;
-            }
-        }
-        return null;
+        return ticketRepository.findOrderById(orderId);
     }
 }

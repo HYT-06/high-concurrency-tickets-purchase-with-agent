@@ -89,6 +89,21 @@ var ChatWidget = (function () {
         panel.classList.remove('open');
     }
 
+    // 每个标签页一个会话标识，存在 sessionStorage 里（关掉标签页即失效）。
+    // 用途是隔离对话记忆：此前所有会话共用 userId 作记忆 key，
+    // 同一用户开多个标签页会互相看到对方的上下文。
+    function getSessionId() {
+        var key = 'chat_session_id';
+        var sid = sessionStorage.getItem(key);
+        if (!sid) {
+            sid = (window.crypto && crypto.randomUUID)
+                ? crypto.randomUUID()
+                : String(Date.now()) + '-' + Math.random().toString(36).slice(2);
+            sessionStorage.setItem(key, sid);
+        }
+        return sid;
+    }
+
     function handleSend() {
         var text = inputEl.value.trim();
         if (!text) return;
@@ -99,14 +114,16 @@ var ChatWidget = (function () {
         showTyping();
         sendBtn.disabled = true;
 
-        var userId = Auth.getUser().id || 'default';
         var headers = { 'Content-Type': 'application/json' };
         var token = Auth.getToken();
         if (token) {
             headers['Authorization'] = 'Bearer ' + token;
         }
 
-        var body = { userId: String(userId), message: text };
+        // 身份不再由前端上传：网关校验 JWT 后会注入 X-User-Id，
+        // agent 只认这个头，请求体里的 userId 即使传了也会被忽略。
+        // sessionId 每个标签页独立，用于隔离对话记忆（避免多标签页共用同一份上下文）。
+        var body = { sessionId: getSessionId(), message: text };
         var requestUrl = AGENT_URL;
 
         log('SEND', '=== 发送请求 ===');

@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +28,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class JwtFilter implements Filter {
 
     private static final String SECRET = "REDACTED_JWT_SECRET";
+
+    /** 校验通过后注入给下游服务的用户身份头，agent 从它读取 userId */
+    public static final String USER_ID_HEADER = "X-User-Id";
 
     @Value("${rate-limit.requests-per-second:10.0}")
     private double requestsPerSecond;
@@ -60,9 +64,6 @@ public class JwtFilter implements Filter {
         }
 
         if (isWhitelisted(path)) {
-            if (path.startsWith("/chat")) {
-                System.out.println("[Gateway] /chat 请求通过白名单: " + method + " " + path);
-            }
             chain.doFilter(request, response);
             return;
         }
@@ -102,7 +103,39 @@ public class JwtFilter implements Filter {
             return;
         }
 
-        chain.doFilter(request, response);
+        // 把校验通过的身份注入请求头，供下游服务（agent）使用。
+        // 必须用包装器强制覆盖：如果客户端自己带了 X-User-Id，直接透传就等于
+        // 让它伪造身份，绕过刚做完的 JWT 校验。
+        chain.doFilter(new AuthenticatedRequest(httpRequest, userId), response);
+    }
+
+    /**
+     * 强制覆盖 {@code X-User-Id}：无论客户端是否自带该头，一律以 JWT 解析出的身份为准。
+     */
+    private static class AuthenticatedRequest extends HttpServletRequestWrapper {
+
+        private final String userId;
+
+        AuthenticatedRequest(HttpServletRequest request, String userId) {
+            super(request);
+            this.userId = userId;
+        }
+
+        @Override
+        public String getHeader(String name) {
+            if (USER_ID_HEADER.equalsIgnoreCase(name)) {
+                return userId;
+            }
+            return super.getHeader(name);
+        }
+
+        @Override
+        public java.util.Enumeration<String> getHeaders(String name) {
+            if (USER_ID_HEADER.equalsIgnoreCase(name)) {
+                return java.util.Collections.enumeration(java.util.List.of(userId));
+            }
+            return super.getHeaders(name);
+        }
     }
 
     /**
@@ -123,10 +156,8 @@ public class JwtFilter implements Filter {
                 || path.startsWith("/favicon.ico")) {
             return true;
         }
-        // 智能客服 API（由前端 widget 携带 token 鉴权）
-        if (path.startsWith("/chat")) {
-            return true;
-        }
+        // 智能客服 API（/chat）不在此列：它要查用户的真实订单，
+        // 必须经过 JWT 校验并由本过滤器注入 X-User-Id，否则客户端可伪造身份越权。
         // 监控查询 API（内部调用，不做 JWT 鉴权）
         if (path.startsWith("/monitor")) {
             return true;

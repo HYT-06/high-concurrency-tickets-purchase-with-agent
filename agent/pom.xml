@@ -52,6 +52,17 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-web</artifactId>
     	</dependency>
+    <!-- 只读访问 demo 的 MySQL：原先 5 个工具都返回硬编码 mock 数据，
+         现在改为查真实库（账号 agent_ro 仅有 SELECT 权限） -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-jdbc</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.mysql</groupId>
+        <artifactId>mysql-connector-j</artifactId>
+        <scope>runtime</scope>
+    </dependency>
     <!-- LangChain4j 核心 Starter -->
     <dependency>
         <groupId>dev.langchain4j</groupId>

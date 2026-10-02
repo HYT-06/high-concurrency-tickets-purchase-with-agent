@@ -13,23 +13,73 @@ spring:
   devtools:
     restart:
       enabled: false
-  datasource:
-    url: jdbc:mysql://localhost:3306/ticket?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8
-    username: root
-    password: "123456"
-    driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     redis:
-      host: localhost
-      port: 6379
+      # ============================================================
+      # Redis 哨兵模式：1 主(6379) + 2 从(6380/6381) + 3 哨兵(26379-26381)
+      # 哨兵模式下不能再配 host/port，否则配置冲突。
+      # 客户端会通过哨兵自动发现当前主节点，故障转移后无需改配置、无需重启。
+      # 参数说明见 sql/redis/ 下的哨兵配置。
+      # ============================================================
+      sentinel:
+        master: mymaster
+        nodes: localhost:26379,localhost:26380,localhost:26381
       database: 0
       timeout: 10s
   rabbitmq:
-      host: localhost
-      port: 5672
-      username: guest
-      password: guest
-      virtual-host: /
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    connection-timeout: 10s
+    # 生产者可靠性：开启确认与退回回调，失败不再静默
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    template:
+      # 无法路由到队列的消息触发 ReturnsCallback，而不是被丢弃
+      mandatory: true
+      retry:
+        enabled: true
+        initial-interval: 1s
+        max-attempts: 3
+    listener:
+      simple:
+        acknowledge-mode: auto
+        prefetch: 10
+        # 重试耗尽后拒绝消息，交由死信交换机处理，避免无限重入队
+        default-requeue-rejected: false
+        retry:
+          enabled: true
+          initial-interval: 1s
+          max-attempts: 3
+          multiplier: 2.0
+# ============================================================
+# MySQL 主从读写分离（由 DataSourceConfig 装配）
+# 主库：写操作 + 座位/用户等要求强一致的读
+# 从库：只承接 @Transactional(readOnly = true) 的查询（订单、车次列表）
+# 建库与启动方式见 sql/slave/my.ini 与 sql/setup_slave_db.sql
+# ============================================================
+app:
+  datasource:
+    master:
+      # allowPublicKeyRetrieval=true：MySQL 8 默认认证插件是 caching_sha2_password，
+      # 在非 SSL 连接下首次认证需要获取服务端公钥，否则报
+      # "Public Key Retrieval is not allowed"（密码缓存失效时必现，例如服务重启后）。
+      jdbc-url: jdbc:mysql://localhost:3306/ticket?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&characterEncoding=utf8
+      username: root
+      password: "123456"
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      maximum-pool-size: 10
+    slave:
+      jdbc-url: jdbc:mysql://localhost:3307/ticket?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&characterEncoding=utf8
+      username: root
+      password: "123456"
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      maximum-pool-size: 10
+      # 连接级只读，与从库服务端的 read_only=1 形成双重保护
+      read-only: true
+
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.hyt.test.demo.common

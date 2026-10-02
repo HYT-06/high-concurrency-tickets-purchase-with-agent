@@ -6,8 +6,13 @@ spring:
     name: monitor-agent
   data:
     redis:
-      host: localhost
-      port: 6379
+      # Redis 哨兵模式：1 主(6379) + 2 从(6380/6381) + 3 哨兵(26379-26381)
+      # 哨兵模式下不能再配 host/port，否则配置冲突。
+      # 监控数据（monitor:*）由网关写入，本模块只读；
+      # 故障转移期间可能短暂读取失败，读操作本身可容忍。
+      sentinel:
+        master: mymaster
+        nodes: localhost:26379,localhost:26380,localhost:26381
 
 # LangChain4j 双模型配置
 # 主 Agent 用 qwen-plus（强推理），子 Agent 用 qwen-turbo（低成本）
